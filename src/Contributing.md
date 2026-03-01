@@ -27,7 +27,7 @@ Before contributing, keep these principles in mind:
 > bspwm-wiki aims to **reduce blind config copying**, not encourage it. But this documentation shall include some configuration files and references purely for learning purposes.
 
 ### How to contribute
-1) Fork the repository from github : [rdbhvr-001/bspwm-wiki](https://github.com/rdbhvr-001/bspwm-wiki.git)
+1) Fork the repository from github : [rudv-ar/bspwm-wiki](https://github.com/rudv-ar/bspwm-wiki.git)
 2) Create a new branch for your change in that forked repository
 3) Install `rust mdbook` for documentation by the following commands
 

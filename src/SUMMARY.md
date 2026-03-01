@@ -1,46 +1,36 @@
 # Summary
 
-***
+___
 
-# Introduction
+# Introductions
+- [Getting Started with Bspwm Wiki](./intro/01.md)
+- [Getting Started with Bspwm](./intro/02.md)
+- [Knowing the Bspwm Tree](./intro/03.md)
+- [Seperation of Concerns](./intro/04.md)
+- [How Bspwm Manages Nodes](./intro/05.md)
+- [Navigating the Bspwm Tree](./intro/06.md)
+- [Knowing the Presentation Modes](./intro/07.md)
+- [Nature of Rules and External Rules](./intro/08.md)
+- [Bspwm as a Reactive Model](./intro/09.md)
+- [Necessity of the Bspwm Socket](./intro/10.md)
+- [Introductory References](./intro/11.md)
 
-  - [Introduction to wiki](./readme.md)
-  - [How to master bspwm](./Mastering-Bspwm.md)
-  - [Introduction to bspwm](./intro/Introduction.md)
-  - [Architecture of bspwm](./intro/Architechture.md)
+___
 
-***
+# Command Manual
+- [The bspc config command](./command/01.md)
+- [The bspc query command](./command/02.md)
 
-# Basics
+___ 
 
-  - [The bspc config command](./basics/Bspc-Config.md)
-  - [The bspc query command](./basics/Bspc-Query.md)
+# Configurations 
+- [Writing configs using bspc](./configs/01.md)
+- [Writing modular configs](./configs/02.md)
+- [Configuration gallery](./refs/Refs.md)
 
-***
+___
 
-# Advanced
-
-  - [Bspwm interfaces and usage](./advanced/Interface.md)
-
-***
-
-# Configurations
-
-  - [Writing configs using bspc](./configs/Writing-Configs.md)
-  - [Introduction to writing modular configs](./configs/Modular-Intro.md)
-  - [Configuration gallery](./refs/Refs.md)
-
-***
-
-# Manpages
-
-  - [Extended docs of manpages](./manpages/Extended-Docs.md)
-
-***
-
-# Community
-
-  - [Contributing to bspwm-wiki](./Contributing.md)
-  - [Changelog](./Changelog.md)
-
+# Community 
+- [Contributing to bspwm-wiki](./Contributing.md)
+- [Changelog](./Changelog.md)
 

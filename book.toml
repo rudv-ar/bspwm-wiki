@@ -1,10 +1,8 @@
 [book]
-title = "The bspwm-wiki"
+title = "The Bspwm Wiki"
 authors = ["rdbhvr"]
 language = "en"
 
 [output.html]
-edit-url-template = "https://github.com/rdbhvr-001/bspwm-wiki/edit/main/{path}"
-additional-css = ["./assets/css/admonish.css"]
-
+edit-url-template = "https://github.com/rudv-ar/bspwm-wiki/edit/main/{path}"
 

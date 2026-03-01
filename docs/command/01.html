@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Contributing to bspwm-wiki - The Bspwm Wiki</title>
+        <title>The bspc config command - The Bspwm Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,33 +12,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
-        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-19831645.js";
+            window.path_to_searchindex_js = "../searchindex-19831645.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e07af014.js"></script>
+        <script src="../toc-e07af014.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -105,7 +105,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -140,10 +140,10 @@
                     <h1 class="menu-title">The Bspwm Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
-                        <a href="https://github.com/rudv-ar/bspwm-wiki/edit/main/src/Contributing.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/rudv-ar/bspwm-wiki/edit/main/src/command/01.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -177,78 +177,163 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="how-to-contribute-to-bspwm-wiki"><a class="header" href="#how-to-contribute-to-bspwm-wiki">How to Contribute to bspwm-wiki</a></h1>
-<p>bspwm-wiki exists to make <strong>bspwm understandable</strong>, not just configurable. Contributions that improve clarity, correctness, and learning are always welcome.
-You <strong>don’t need to be an expert</strong> to contribute - even small improvements help.</p>
-<h2 id="what-you-can-contribute"><a class="header" href="#what-you-can-contribute">What You Can Contribute</a></h2>
-<p>You can help bspwm-wiki in many ways:</p>
-<ul>
-<li>Fix typeos or unclear explanations</li>
-<li>Improve wording for beginners</li>
-<li>Add examples that explain <em>why</em>, not just <em>how</em></li>
-<li>Expand existing sections with missing details</li>
-<li>Suggest new sections or topics</li>
-<li>Share debugging tips or common pitfalls
-If something confused you while learning bspwm, that’s probably worth documenting.</li>
-</ul>
-<h3 id="what-bspwm-wiki-values"><a class="header" href="#what-bspwm-wiki-values">What bspwm-wiki Values</a></h3>
-<p>Before contributing, keep these principles in mind:</p>
-<ol>
-<li>Explain concepts, not just commands</li>
-<li>Prefer reasoning over copy-paste solutions</li>
-<li>Assume the reader is curious, not careless</li>
-<li>Keep a neutral, respectful tone</li>
-<li>Make sure that your content has clarity</li>
-</ol>
-<blockquote class="blockquote-tag blockquote-tag-warning">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
-<p>bspwm-wiki aims to <strong>reduce blind config copying</strong>, not encourage it. But this documentation shall include some configuration files and references purely for learning purposes.</p>
-</blockquote>
-<h3 id="how-to-contribute"><a class="header" href="#how-to-contribute">How to contribute</a></h3>
-<ol>
-<li>Fork the repository from github : <a href="https://github.com/rudv-ar/bspwm-wiki.git">rudv-ar/bspwm-wiki</a></li>
-<li>Create a new branch for your change in that forked repository</li>
-<li>Install <code>rust mdbook</code> for documentation by the following commands</li>
-</ol>
-<pre><code class="language-bash"># Make sure that you have cargo and rust installed. A simple surf in web can help you install them.
-# Install mdbook via cargo
-
-cargo install mdbook
-
-# Make sure to add cargo to your PATH
-
+                        <h2 id="introduction-to-bspc-command"><a class="header" href="#introduction-to-bspc-command">Introduction to <code>bspc</code> command</a></h2>
+<p>Bspwm is controlled and configured via the <code>bspc</code> command.  In practice one writes a shell script (typically $XDG_CONFIG_HOME/bspwm/bspwmrc) that calls bspc config to set various options.  The general syntax is:</p>
+<pre><code class="language-bash">bspc config [ -m MONITOR | -d DESKTOP | -n NODE ] &lt; setting &gt; [&lt; value &gt;]
 </code></pre>
-<ol start="4">
-<li>Learn how to use <a href="https://rust-lang.github.io/mdBook/">mdbook</a>.</li>
-<li>In the forked repository, you will find <code>SUMMARY.md</code> file and other md files inside src directory, which is basically the index and source for bspwm-wiki, follow the instructions given in step 4.</li>
-<li>After editting the markdown files or adding new ones, you can use the following command to generate the book from the project root dir.</li>
-</ol>
-<pre><code class="language-bash"># To test it in your friendly local browser test with
-mdbook serve
-
-# To build the book, in the terminal typeos
-mdbook build
-
-# The book is compiled to html and is in `./book` directory.
+<p>This gets or sets the value of <code>&lt; setting &gt;</code>. Without selectors, the setting applies globally; with -m, -d, or -n it targets a specific monitor, desktop or node.  Each option affects bspwm’s behavior: for example, bspc config border_width 3 sets the width of window borders to 3 pixels.  The settings below comprise every configurable parameter (as of the latest stable bspwm) and include the option’s role, valid values, default behavior, and examples.</p>
+<h2 id="window-borders-and-colors"><a class="header" href="#window-borders-and-colors">Window Borders and Colors</a></h2>
+<p>Bspwm uses window borders to indicate focus and state.  The global border color settings are:</p>
+<p><strong><code>normal_border_color:</code></strong> color for an unfocused window’s border.</p>
+<p><strong><code>active_border_color:</code></strong> color for a focused window on an unfocused monitor.</p>
+<p><strong><code>focused_border_color</code>:</strong> color for a focused window on the active monitor.
+Each of these accepts any color string #RRGGBB or named X color.  For example, to make the focused window’s border red:</p>
+<pre><code class="language-bash">bspc config focused_border_color "#FF0000"
 </code></pre>
-<ol start="7">
-<li>Rename the <code>./book</code> to <code>./docs</code></li>
-<li>Open up a pull request after testing the book locally in browser</li>
-</ol>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
-<p><strong>An Easier Way to Contribute :</strong> You can click that edit source button on the navbar near print button to directly edit the source, make a pull request and make changes.</p>
+<p>You can query the current color with bspc config focused_border_color</p>
 </blockquote>
+<p>A special feedback color, <code>presel_feedback_color</code>, governs the border drawn during manual split-preselection (preselection feedback).  For instance, setting</p>
+<pre><code class="language-bash">bspc config presel_feedback_color "#00FF00"
+</code></pre>
+<p>will draw a green highlight where a split will occur.</p>
+<p>The <code>border_width</code> option (a node setting) sets the thickness in pixels of the window border. Its default is 1 pixel; to make borders thicker, e.g.:</p>
+<pre><code class="language-bash">bspc config border_width 2
+</code></pre>
+<p>These parameters control the visual frame around windows.  In the <strong>monocle layout</strong> (one-window fullscreen mode), two special flags exist: <strong>borderless_monocle</strong> (boolean) removes borders when in monocle mode, and <strong>gapless_monocle</strong> removes any window gaps in monocle layout.  Finally, <strong>single_monocle</strong> (boolean) forces the layout to switch to monocle when only one window is present. For example:</p>
+<pre><code class="language-bash">bspc config borderless_monocle true
+bspc config gapless_monocle true
+bspc config single_monocle true
+</code></pre>
+<p>These would eliminate borders and gaps in monocle layout and make that layout automatic for lone windows.</p>
+<h2 id="splitting-and-layout"><a class="header" href="#splitting-and-layout">Splitting and Layout</a></h2>
+<p>The <code>split_ratio</code> setting defines how a window is partitioned when a new window is inserted in automatic mode. It is a fraction between 0 and 1. For example,</p>
+<pre><code class="language-bash">bspc config split_ratio 0.60
+</code></pre>
+<p>makes new splits 60/40 by default (i.e. the first child gets 60% of the space).  The default is 0.5 (even split) unless changed in your config.</p>
+<p><strong>Window spacing is controlled by <code>window_gap</code></strong> (desktop setting), which is the number of pixels of space between tiled windows.  To add a 10px gap everywhere, use:</p>
+<pre><code class="language-bash">bspc config window_gap 10
+</code></pre>
+<p><strong>Monocle-layout</strong> padding can also be set. The options top_monocle_padding, right_monocle_padding, bottom_monocle_padding, and left_monocle_padding (all in pixels) add blank space at the screen edges when in monocle mode. For example, to center a monocle window with a 20px top margin:</p>
+<pre><code class="language-bash">bspc config top_monocle_padding 20
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>In summary, <code>split_ratio</code> and <code>window_gap</code> affect tiling splits and inter-window gaps, while the monocle flags/padding fine-tune fullscreen behavior.</p>
+</blockquote>
+<h3 id="automatic-tiling-and-preselection"><a class="header" href="#automatic-tiling-and-preselection">Automatic Tiling and Preselection</a></h3>
+<p>Bspwm can tile windows automatically or under manual preselection. The automatic_scheme option chooses the insertion algorithm: it accepts longest_side, alternate, or spiral.  This determines how the binary partitioning tree expands. For example:</p>
+<pre><code class="language-bash">bspc config automatic_scheme spiral
+</code></pre>
+<p>switches to the <strong>“spiral”</strong> insertion pattern.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>By default bspwm uses <code>alternate</code> automatic scheme which alternates between vertical and horizontal splits.</p>
+</blockquote>
+<p>The <code>initial_polarity</code> option determines on which side a new window is attached in an automatic split when a node has only one child. It can be first_child or second_child. For instance:</p>
+<pre><code class="language-bash">bspc config initial_polarity first_child
+</code></pre>
+<p>makes new windows attach on the first (left or top) side of the split by default. (By default this is usually second_child.)</p>
+<p><strong>Other related options:</strong> <code>directional_focus_tightness</code> (high or low) tweaks how strictly bspwm decides whether a window is “in the DIR side” of another for focus commands. <code>removal_adjustment</code> (boolean) controls whether bspwm adjusts (re-splits) the sibling when a node is removed from the tree; turning it off can leave odd splits if windows are closed.</p>
+<p><strong>Preselection (manual tiling)</strong> can be toggled with pointer commands or key bindings. The presel_feedback setting (boolean, defaults to true) enables the visible overlay that shows where a manual split will occur. If you disable it (bspc config presel_feedback false), bspwm will still respect manual split commands but won’t draw the highlighted region.</p>
+<p>In short, these settings define how bspwm splits windows: the scheme, where new windows attach, and how strictly the tiling is adjusted or visualized.</p>
+<h3 id="pointer-and-focus-behavior"><a class="header" href="#pointer-and-focus-behavior">Pointer and Focus Behavior</a></h3>
+<p>Bspwm lets you use the mouse (with a modifier key) to move/resize windows and to control focus. The pointer_modifier setting specifies which keyboard modifier (e.g. mod4 for the Super/Windows key) enables pointer actions. For example:</p>
+<pre><code class="language-bash">bspc config pointer_modifier mod4
+</code></pre>
+<p>Means holding Super while clicking/draggings acts on windows.</p>
+<p>By default, <code>pointer_modifier+Button1</code> moves a window, <code>Button2</code> resizes by dragging a side, and <code>Button3</code> resizes by dragging a corner. These defaults correspond to <code>pointer_action1=move</code>, <code>pointer_action2=resize_side</code>, <code>pointer_action3=resize_corner</code>. You can reassign them; e.g.:</p>
+<pre><code class="language-bash">bspc config pointer_action1 resize_side
+bspc config pointer_action2 move
+</code></pre>
+<p>swaps the actions for button1 and button2. Setting pointer_action&lt; n &gt; to none disables that action.</p>
+<p>Focus via mouse clicking is controlled by click_to_focus. It takes button1, button2, button3, any, or none. The default is button1 (left click focuses). For example, to focus windows with a middle-click:</p>
+<pre><code class="language-bash">bspc config click_to_focus button2
+</code></pre>
+<p>The <code>swallow_first_click</code> flag (boolean) prevents the click event that focuses a window from being passed to the application. If true, clicking to focus will not (for example) click buttons in the newly focused window; this is useful if you want a click to only change focus.</p>
+<p><strong>Pointer and focus warping:</strong> <code>focus_follows_pointer</code> (boolean) makes focus follow the mouse pointer; if enabled, simply moving the mouse over a window will focus it. Conversely, <code>pointer_follows_focus</code> (boolean) warps the pointer to the center of the newly focused window, and <code>pointer_follows_monitor</code> does the same for the newly focused monitor. These are all off by default, but can be turned on with e.g.:</p>
+<pre><code class="language-bash">bspc config focus_follows_pointer true
+bspc config pointer_follows_focus true
+</code></pre>
+<p><strong>In summary, the pointer settings let you pick a modifier key and mouse button actions to move/resize windows, and to configure click-to-focus and pointer warping behaviors.</strong></p>
+<h3 id="ewmh-hints-and-miscellaneous"><a class="header" href="#ewmh-hints-and-miscellaneous">EWMH Hints and Miscellaneous</a></h3>
+<p>Bspwm can ignore or honor certain EWMH hints (state requests from other applications) via these settings.</p>
+<p><code>ignore_ewmh_focus</code> (boolean) ignores focus requests from EWMH-compliant clients. If true, external programs cannot change window focus.</p>
+<p><code>ignore_ewmh_fullscreen</code> can be none, all, or a comma-separated list enter,exit. It blocks clients that try to put windows into fullscreen (setting the _NET_WM_STATE_FULLSCREEN hint). For example, bspc config ignore_ewmh_fullscreen all will prevent all EWMH fullscreen changes.</p>
+<p><code>ignore_ewmh_struts</code> (boolean) ignores the EWMH strut hints that panels and docks use to reserve screen space. If you have an always-on-top panel, setting this to true makes bspwm ignore its struts (useful if your panel is external and you don’t want bspwm to avoid it).</p>
+<p><code>center_pseudo_tiled</code> (boolean, defaults to true) determines whether pseudo-tiled windows (tiled windows that respect size hints) are centered in their area. For example, floating dialogs can be treated as pseudo-tiled; if true, bspwm will center them in their split. You can turn it off with bspc config center_pseudo_tiled false.</p>
+<p><code>honor_size_hints</code> (boolean) tells bspwm to apply ICCCM size hints from applications. Enabling this makes bspwm honor the minimum/maximum size hints that some X programs request.</p>
+<p><code>mapping_events_count</code> (integer) sets how many mapping notify events bspwm should process. By default it only handles one (focusing windows, etc.), but a negative value means “handle all.” This is a rare, low-level option usually left at 0 or 1.</p>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>These options govern how bspwm reacts to external hints or special windows. Use them to integrate bspwm with other desktop components (EWMH panels, fullscreen requests) or to tweak size-hint behavior.</p>
+</blockquote>
+<h3 id="monitor-and-desktop-settings"><a class="header" href="#monitor-and-desktop-settings">Monitor and Desktop Settings</a></h3>
+<p>Padding at screen edges is controlled by the <code>top_padding</code>, <code>right_padding</code>, <code>bottom_padding</code>, and <code>left_padding</code> settings (monitor/desktop settings). These are pixel values added as empty space on each side of the screen or desktop. This is commonly used to leave room for panels or docks. For example, to leave a 24px gap at the top (e.g. for a status bar):</p>
+<pre><code class="language-bash">bspc config top_padding 24
+bspc config bottom_padding 0
+bspc config left_padding 0
+bspc config right_padding 0
+</code></pre>
+<p>With this, bspwm will tile windows below that 24px area.</p>
+<p>Bspwm can also manage multiple monitors dynamically. The boolean flags remove_disabled_monitors, remove_unplugged_monitors, and merge_overlapping_monitors (all default false) adjust bspwm’s behavior on monitor changes. <strong>For instance, if you set bspc config remove_unplugged_monitors true, any monitor that is unplugged (e.g. a laptop lid closing) will be treated as disconnected and its desktops moved elsewhere. These are advanced options for multi-head setups</strong>.</p>
+<h3 id="global-misc-settings"><a class="header" href="#global-misc-settings">Global Misc Settings</a></h3>
+<p><strong>status_prefix:</strong> a string prefixed to each bspc event line (used in status scripts). For example, setting</p>
+<pre><code class="language-bash">bspc config status_prefix "[bspwm] "
+</code></pre>
+<p>causes all window/desktop events sent to status bars to start with “ ”.</p>
+<p><strong>external_rules_command:</strong> path to an external script that provides window rule assignments. If set, bspwm will call this command each time a new window appears, passing it the window’s ID, class, and instance, and expecting key=value outputs for rule keys (like split_ratio=0.7, desktop=2, etc.). For example:</p>
+<pre><code class="language-bash">bspc config external_rules_command "$HOME/.config/bspwm/rules.sh"
+</code></pre>
+<p>where rules.sh might output something like center=on follow=on. This allows dynamic, programmatic control of window placement.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>These global options are less frequently changed, but status_prefix can help integrate bspwm with custom panels, and external_rules_command enables advanced window rule logic.</p>
+</blockquote>
+<h3 id="usage-examples"><a class="header" href="#usage-examples">Usage Examples</a></h3>
+<p>Below is a sample snippet of a bspwmrc configuring several options (annotated for clarity):</p>
+<pre><code class="language-bash">
+# Set focused/unfocused border colors
+bspc config focused_border_color "#3585ce"    # blue border for focused windows
+bspc config normal_border_color "#444444"     # gray for others
+
+# Set default split ratio and gaps
+bspc config split_ratio 0.55                  # 55/45 split by default
+bspc config window_gap 10                     # 10px gap between windows
+
+# Monocle layout tweaks
+bspc config borderless_monocle true           # no borders in monocle mode
+bspc config top_monocle_padding 20            # 20px padding on top in monocle
+
+# Pointer/mouse actions
+bspc config pointer_modifier mod4             # use Super key for pointer actions
+bspc config pointer_action3 none              # disable corner resize
+bspc config click_to_focus any                # any click focuses window
+bspc config swallow_first_click true         # do not forward the click event
+
+# Automatic tiling scheme
+bspc config automatic_scheme alternate        # alternate insert (default)
+bspc config initial_polarity second_child     # new windows on second child by default
+
+# Layout hints
+bspc config focus_follows_pointer true        # focus on mouse-over
+bspc config center_pseudo_tiled false        # disable centering pseudo-tiled
+
+# Padding for panels
+bspc config top_padding 30                   # leave 30px at top for panel
+</code></pre>
+<p>Each bspc config command above changes an aspect of bspwm’s layout or behavior, as documented. For a complete reference of all options and their meanings, see the bspwm manual (man page).</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="refs/Refs.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../intro/11.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="Changelog.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../command/02.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -258,11 +343,11 @@ mdbook build
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="refs/Refs.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../intro/11.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="Changelog.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../command/02.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -298,13 +383,13 @@ mdbook build
         </script>
 
 
-        <script src="elasticlunr-ef4e11c1.min.js"></script>
-        <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
 
-        <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
