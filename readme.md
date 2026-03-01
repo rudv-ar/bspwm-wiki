@@ -35,7 +35,7 @@ The following official and community resources complement bspwm-wiki:
 
 - [Official bspwm documentation](https://github.com/baskerville/bspwm)
 - [Arch Wiki: bspwm](https://wiki.archlinux.org/title/Bspwm)
-- [bspwm-wiki (community-maintained bspwm documentation)](https://rdbhvr-001.github.io/bspwm-wiki)
+- [bspwm-wiki (community-maintained bspwm documentation)](https://rudv-ar.github.io/bspwm-wiki)
 
 > bspwm-wiki is referenced by community bspwm configuration and documentation projects. Other popular bspwm configurations are also referenced in this documentation for gathering more ideas and knowledge about know-hows.
 
