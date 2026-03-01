@@ -35,7 +35,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-19831645.js";
+            window.path_to_searchindex_js = "../searchindex-58728f53.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e07af014.js"></script>
@@ -177,7 +177,658 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="introduction-to-writing-modular-configs"><a class="header" href="#introduction-to-writing-modular-configs">Introduction to writing modular configs</a></h1>
+                        <h1 id="writing-modular-configs"><a class="header" href="#writing-modular-configs">Writing Modular Configs</a></h1>
+<blockquote>
+<p>Let’s now take a deep-dive into splitting your bspwm configuration into clean, maintainable, independently sourced modules — the way it was meant to be. I personally insist on writing modular bspwm configs. This is my own example bspwm configuration.</p>
+</blockquote>
+<h2 id="why-modular"><a class="header" href="#why-modular">Why Modular?</a></h2>
+<p>If you have spent any time with bspwm, you know its configuration entry point is a single shell script: <code>bspwmrc</code>. By default, almost every guide on the internet treats <code>bspwmrc</code> as the one file where everything lives — border widths, gap sizes, autostart entries, window rules, monitor setup, all packed into one flat file that becomes completely unmanageable the moment your config grows beyond a few dozen lines.</p>
+<p>The problem is not bspwm — it’s the habit. <code>bspwmrc</code> is a shell script, and shell scripts can do anything a shell can do: source other files, call functions, loop over arrays, read environment variables. The monolithic approach throws all of that power away.</p>
+<p>The modular approach turns your bspwm config into a proper project — a directory of purposeful files, each responsible for one concern, each readable on its own, each swappable without touching anything else. You stop fearing your own config.</p>
+<h2 id="the-project-layout"><a class="header" href="#the-project-layout">The Project Layout</a></h2>
+<p>A well-structured bspwm config lives under <code>~/.config/bspwm/</code> and looks like this:</p>
+<pre><code>~/.config/bspwm/
+├── bspwmrc                  ← entry point, orchestrator only
+├── bspwm.d/                 ← all sourced config modules
+│   ├── exports.sh           ← PATH, environment variables
+│   ├── settings.sh          ← all tunable variables (the "config file")
+│   ├── config.sh            ← bspc calls, wrapped in functions
+│   ├── monitor.sh           ← workspace/monitor layout functions
+│   ├── rules.sh             ← bspc rule declarations
+│   ├── autostart.sh         ← programs launched on session start
+│   ├── sxhkdrc              ← keybindings (sxhkd)
+│   ├── picom.conf           ← compositor config
+│   ├── dunstrc              ← notification daemon config
+│   └── exter_rules/         ← external rule scripts (optional)
+├── src/                     ← executable helper scripts
+│   ├── bspterm
+│   ├── bspbar
+│   ├── bspfloat
+│   ├── bspscreenshot
+│   └── ...
+├── apps/                    ← per-application configs
+│   └── alacritty/
+│       ├── alacritty.toml
+│       ├── fonts.toml
+│       ├── colors.toml
+│       └── colorschemes/    ← swappable color scheme files
+├── widgets/                 ← bar/widget configs
+│   ├── polybar/
+│   └── quickshell/
+└── walls/                   ← wallpapers
+</code></pre>
+<p>Each directory has a single clear job. <code>bspwm.d/</code> is where your WM configuration modules live. <code>src/</code> holds scripts that are exported onto <code>$PATH</code>. <code>apps/</code> holds configs for external programs. <code>widgets/</code> holds your bar ecosystem. Nothing bleeds into anything else.</p>
+<h2 id="the-entry-point-bspwmrc"><a class="header" href="#the-entry-point-bspwmrc">The Entry Point: <code>bspwmrc</code></a></h2>
+<p>The <code>bspwmrc</code> file should do almost nothing on its own. Its only job is to define the root path, source the modules in the right order, and call the top-level functions they expose.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+####################### IMPORT THE EXPORTS ################################
+
+BSPDIRD="$HOME/.config/bspwm/bspwm.d"
+source "$BSPDIRD/settings.sh"
+source "$BSPDIRD/monitor.sh"
+source "$BSPDIRD/config.sh"
+
+###################### COMMAND THE BSPWM ###################################
+
+# Set up monitors and workspaces
+workspaces
+
+# Configure bspwm in discrete passes
+bspc_configure border
+bspc_configure windows
+bspc_configure scheme
+bspc_configure status_prefix
+bspc_configure monocle
+bspc config focus_follows_pointer "true"
+
+# Apply window rules
+source "$BSPDIRD/rules.sh"
+
+# Start applications
+source "$BSPDIRD/autostart.sh"
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Notice that <code>bspwmrc</code> never touches a <code>bspc config</code> call directly (except a single override at the bottom). Every <code>bspc config</code> call is inside a function defined in <code>config.sh</code>. <code>bspwmrc</code> just <em>calls</em> those functions. This means you can open <code>bspwmrc</code> and understand the entire session-startup sequence in under 20 lines.</p>
+</blockquote>
+<p>The sourcing order matters. <code>settings.sh</code> must be sourced before <code>config.sh</code> because <code>config.sh</code> reads the variables that <code>settings.sh</code> defines. <code>monitor.sh</code> must come before <code>workspaces()</code> is called for obvious reasons. Get the dependency chain right and everything flows cleanly top to bottom.</p>
+<h2 id="module-1-exportssh--environment-and-path"><a class="header" href="#module-1-exportssh--environment-and-path">Module 1: <code>exports.sh</code> — Environment and PATH</a></h2>
+<p>This is the first module <code>settings.sh</code> pulls in. It has one job: set environment variables that every other module and script will depend on.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+## Bspwm config directory
+BSPDIR="$HOME/.config/bspwm"
+
+## Export bspwm/bin dir to PATH
+export PATH="${PATH}:$BSPDIR/src"
+export XDG_CURRENT_DESKTOP='bspwm'
+
+## Run java applications without issues
+export _JAVA_AWT_WM_NONREPARENTING=1
+</code></pre>
+<p>The key line here is <code>export PATH="${PATH}:$BSPDIR/src"</code>. Every script inside <code>src/</code> — <code>bspterm</code>, <code>bspbar</code>, <code>bspscreenshot</code>, etc. — becomes available as a plain command anywhere in the config, in sxhkdrc, or in a terminal. You never have to write absolute paths.</p>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p><code>exports.sh</code> must be sourced before anything else. <code>settings.sh</code> sources it at the very top. If you reverse the order and try to reference <code>$BSPDIR</code> before it’s been exported, every path-based variable in your config will silently break.</p>
+</blockquote>
+<h2 id="module-2-settingssh--the-single-source-of-truth"><a class="header" href="#module-2-settingssh--the-single-source-of-truth">Module 2: <code>settings.sh</code> — The Single Source of Truth</a></h2>
+<p>This is the crown jewel of the modular approach. <code>settings.sh</code> is where <em>every</em> tunable value in your bspwm setup lives. No magic numbers scattered across files. If you want to change your border color, you open <code>settings.sh</code>. If you want to toggle gaps off, you open <code>settings.sh</code>. Exactly one file.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+PTH="$HOME/.config/bspwm/bspwm.d"
+source "$PTH/exports.sh"
+
+################### Borders ############################
+
+BSPWM_FBC='#414868'   # focused border color
+BSPWM_NBC='#1e1e2e'   # normal border color
+BSPWM_ABC='#000000'   # active border color
+
+IS_BSPWM_BORDER=true
+
+if [[ $IS_BSPWM_BORDER == true ]]; then
+    BSPWM_BORDER='2'
+else
+    BSPWM_BORDER='0'
+fi
+
+################# Presel ###############################
+
+IS_BSPWM_PRESEL=false
+
+if [[ $IS_BSPWM_PRESEL == true ]]; then
+    BSPWM_PFC='#6272a4'
+else
+    BSPWM_PFC='#000000'
+fi
+
+################ Window Properties #####################
+
+IS_BSPWM_GAPPED=true
+IS_BSPWM_PADDED=false
+
+if [[ $IS_BSPWM_GAPPED == true ]]; then
+    BSPWM_GAP='10'
+else
+    BSPWM_GAP='0'
+fi
+
+BSPWM_SRATIO='0.50'
+
+TOP_PADDING=10
+BOTTOM_PADDING=10
+LEFT_PADDING=10
+RIGHT_PADDING=10
+
+################# Scheme Properties ####################
+
+IS_BSPWM_AUTOMATIC=true
+AUTOMATIC_SCHEME='spiral'
+INITIAL_POLARITY='second_child'
+
+################ Monocle Properties ####################
+
+IS_BSPWM_BORDERLESS_MONOCLE="true"
+IS_BSPWM_GAPLESS_MONOCLE="true"
+IS_BSPWM_SINGLE_MONOCLE="false"
+
+################ Status Config #########################
+
+STATUS_PREFIX=""
+
+################# Widget Bar ###########################
+
+# Switch between "polybar" and "quickshell" without touching autostart.sh
+WIDGET_BAR="quickshell"
+
+################ Optional Services #####################
+
+IS_SNAPSERVER_ENABLED="true"
+</code></pre>
+<p>There are several patterns worth studying here.</p>
+<p><strong>Boolean gating with derived variables.</strong> Rather than having a raw boolean that does nothing, every <code>IS_*</code> boolean immediately derives the actual value used by bspc. <code>IS_BSPWM_GAPPED=true</code> sets <code>BSPWM_GAP='10'</code>. Flip the boolean to <code>false</code> and the gap becomes <code>'0'</code>. The <code>config.sh</code> functions read <code>BSPWM_GAP</code> — they never read the boolean directly. This means the calling code stays clean.</p>
+<p><strong>Grouping by concern.</strong> Border variables are together. Presel variables are together. Window properties, scheme properties, monocle properties — each has its own section with a comment banner. When you come back to this file six months later, you can scan it in 30 seconds and find exactly what you need.</p>
+<p><strong>Widget bar switching.</strong> <code>WIDGET_BAR="quickshell"</code> is a string variable read by <code>autostart.sh</code>. To switch your bar from Quickshell to Polybar, you change exactly one string in exactly one file. No hunting through autostart scripts for hardcoded launcher paths.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p><code>settings.sh</code> does not issue a single <code>bspc config</code> call. It only defines variables. This separation is the entire point. The module that defines <em>what</em> you want is completely separate from the module that <em>does</em> something about it.</p>
+</blockquote>
+<h2 id="module-3-configsh--the-function-layer"><a class="header" href="#module-3-configsh--the-function-layer">Module 3: <code>config.sh</code> — The Function Layer</a></h2>
+<p><code>config.sh</code> contains functions that translate your settings into actual <code>bspc config</code> calls. It reads from <code>settings.sh</code> and acts. Nothing more.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+PTH="$HOME/.config/bspwm/bspwm.d"
+source "$PTH/settings.sh"
+
+# Configure borders
+configure_border() {
+    if [[ $IS_BSPWM_BORDER == true ]]; then
+        bspc config border_width         "$BSPWM_BORDER"
+        bspc config focused_border_color "$BSPWM_FBC"
+        bspc config normal_border_color  "$BSPWM_NBC"
+        bspc config active_border_color  "$BSPWM_ABC"
+    else
+        bspc config border_width "$BSPWM_BORDER"
+    fi
+}
+
+# Configure window layout
+configure_windows() {
+    bspc config window_gap      "$BSPWM_GAP"
+    bspc config split_ratio     "$BSPWM_SRATIO"
+    bspc config initial_polarity "$INITIAL_POLARITY"
+
+    if [[ $IS_BSPWM_PRESEL == true ]]; then
+        bspc config presel_feedback       true
+        bspc config presel_feedback_color "$BSPWM_PFC"
+    else
+        bspc config presel_feedback false
+    fi
+
+    if [[ $IS_BSPWM_PADDED == true ]]; then
+        bspc config top_padding    "$TOP_PADDING"
+        bspc config bottom_padding "$BOTTOM_PADDING"
+        bspc config right_padding  "$RIGHT_PADDING"
+        bspc config left_padding   "$LEFT_PADDING"
+    fi
+}
+
+# Configure monocle layout
+configure_monocle() {
+    bspc config borderless_monocle "$IS_BSPWM_BORDERLESS_MONOCLE"
+    bspc config gapless_monocle    "$IS_BSPWM_GAPLESS_MONOCLE"
+}
+
+# Configure tiling scheme
+configure_scheme() {
+    if [[ $IS_BSPWM_AUTOMATIC == true ]]; then
+        bspc config automatic_scheme "$AUTOMATIC_SCHEME"
+    fi
+}
+
+# Configure status prefix
+configure_prefix() {
+    bspc config status_prefix "$STATUS_PREFIX"
+}
+
+# Public dispatcher
+bspc_configure() {
+    case ${1} in
+        border)        configure_border  ;;
+        windows)       configure_windows ;;
+        monocle)       configure_monocle ;;
+        scheme)        configure_scheme  ;;
+        status_prefix) configure_prefix  ;;
+    esac
+}
+</code></pre>
+<p>The <code>bspc_configure</code> dispatcher at the bottom is the public API of this module. <code>bspwmrc</code> calls <code>bspc_configure border</code>, <code>bspc_configure windows</code>, etc. If you ever need to add a new configuration domain — say, pointer behavior — you write a <code>configure_pointer()</code> function and add one line to the <code>case</code> block. Everything else stays untouched.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>The dispatcher pattern makes <code>config.sh</code> self-documenting. Anyone reading <code>bspwmrc</code> sees <code>bspc_configure border</code> and immediately knows where to look for the border configuration implementation. They don’t have to grep through a flat file looking for <code>bspc config border_width</code>.</p>
+</blockquote>
+<h2 id="module-4-monitorsh--workspace-layout"><a class="header" href="#module-4-monitorsh--workspace-layout">Module 4: <code>monitor.sh</code> — Workspace Layout</a></h2>
+<p>Monitor configuration is the most system-specific part of any bspwm setup. It changes when you plug in an external monitor, when you reinstall on a laptop, when you switch from single to dual screen. Keeping it isolated means you can swap it out without touching anything else.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+# Default setup: 8 workspaces across all detected monitors
+workspaces() {
+    name=1
+    for monitor in $(bspc query -M); do
+        bspc monitor "$monitor" -d '1' '2' '3' '4' '5' '6' '7' '8'
+        (( name++ ))
+    done
+}
+
+# Dual monitor: laptop + external HDMI
+two_monitors_workspaces() {
+    INTERNAL_MONITOR="eDP"
+    EXTERNAL_MONITOR="HDMI-A-0"
+
+    if [[ $(xrandr -q | grep "${EXTERNAL_MONITOR} connected") ]]; then
+        bspc monitor "$EXTERNAL_MONITOR" -d '' '' '' ''
+        bspc monitor "$INTERNAL_MONITOR" -d '' '' '' ''
+        bspc wm -O "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+    else
+        bspc monitor "$INTERNAL_MONITOR" -d '' '' '' '' '' '' '' ''
+    fi
+}
+
+# Triple monitor: 3-2-3 workspace distribution
+three_monitors_workspaces() {
+    MONITOR_1="eDP"
+    MONITOR_2="HDMI-A-0"
+    MONITOR_3="HDMI-A-1"
+
+    bspc monitor "$MONITOR_1" -d '' ''
+    bspc monitor "$MONITOR_2" -d '' '' ''
+    bspc monitor "$MONITOR_3" -d '' '' ''
+    bspc wm -O "$MONITOR_2" "$MONITOR_1" "$MONITOR_3"
+}
+</code></pre>
+<p>All three layouts are defined. Only one is called. In <code>bspwmrc</code>, the call is just <code>workspaces</code>. To switch to a dual monitor layout, you change that one word to <code>two_monitors_workspaces</code>. The logic for detecting a connected HDMI monitor is already there waiting.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The <code>two_monitors_workspaces()</code> function uses <code>xrandr -q</code> to detect if the external monitor is connected. This means it works correctly whether the external monitor is plugged in or not — it falls back to assigning all 8 workspaces to the laptop screen. You can use this same pattern to make your config laptop-safe even when developing on a multi-monitor desktop.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Use <code>bspc query -M</code> to enumerate monitors dynamically rather than hardcoding monitor names. The default <code>workspaces()</code> function in this project does exactly that — it assigns desktops to every monitor it finds at startup, regardless of how many monitors there are or what they’re named.</p>
+</blockquote>
+<h2 id="module-5-rulessh--window-rules"><a class="header" href="#module-5-rulessh--window-rules">Module 5: <code>rules.sh</code> — Window Rules</a></h2>
+<p>Window rules in bspwm are issued via <code>bspc rule -a</code>. In a flat <code>bspwmrc</code>, these pile up into an unreadable wall. The modular approach puts them in <code>rules.sh</code>, where they can be grouped by type, use arrays for batch application, and be read independently.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+################################# Declare Variables #####################################
+
+# Apps to open in workspace 4
+declare -a code=(
+    Geany
+    code-oss
+)
+
+# Apps to open in workspace 5
+declare -a office=(
+    Gucharmap Atril Evince
+    libreoffice-writer libreoffice-calc libreoffice-impress
+    libreoffice-startcenter libreoffice Soffice
+    '*:libreofficedev' '*:soffice'
+)
+
+# Apps to open in workspace 7 (floating)
+declare -a media=(
+    Audacity Music MPlayer Lxmusic Inkscape Gimp-2.10 obs
+)
+
+# Apps that should always float
+declare -a floating=(
+    alacritty-float cavasik kitty-float Pcmanfm Onboard Yad
+    'Firefox:Places' Viewnior feh Nm-connection-editor scrcpy
+)
+
+################################## bspc rules ###########################################
+
+# Adopt any orphaned windows from a previous session
+bspc wm --adopt-orphans
+
+# Remove all existing rules before re-applying
+bspc rule -r '*:*'
+
+# Workspace-specific rules
+bspc rule -a firefox  desktop='^2' follow=on focus=on
+bspc rule -a chromium desktop='^2' follow=on focus=on
+
+for i in "${code[@]}";  do bspc rule -a "$i" desktop='^4' follow=on focus=on; done
+for i in "${office[@]}"; do bspc rule -a "$i" desktop='^5' follow=on focus=on; done
+for i in "${media[@]}"; do
+    bspc rule -a "$i" desktop='^7' state=floating follow=on focus=on
+done
+
+# System settings
+bspc rule -a 'VirtualBox Manager' desktop='^8' follow=on focus=on
+bspc rule -a GParted              desktop='^8' follow=on focus=on
+
+# Always floating
+for i in "${floating[@]}"; do
+    bspc rule -a "$i" state=floating follow=on focus=on
+done
+
+# Widget-specific rules
+bspc rule -a vicinae state=floating follow=on focus=on \
+    border=false rectangle=700x500+350+768
+
+# Quickshell overlay (truly unmanaged)
+bspc rule -a '' name=quickshell \
+    state=floating layer=above sticky=on focusable=off border=off
+
+# Stalonetray
+bspc rule -a stalonetray state=floating manage=off
+</code></pre>
+<p>The array-based approach to rules is one of the biggest quality-of-life improvements in this whole setup. Instead of writing 10 individual <code>bspc rule</code> calls for every office application, you add to the <code>office</code> array and the loop handles it. Adding a new code editor to workspace 4 is a one-word change.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Always call <code>bspc rule -r '*:*'</code> before applying your rules. This removes any leftover rules from the previous session (since bspwm rules accumulate across <code>bspwmrc</code> re-executions via <code>bspc wm --restart</code>). Without this line, reloading your config doubles all your rules.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p>Window class names in <code>bspc rule -a</code> are case-sensitive and must match exactly what <code>xprop WM_CLASS</code> returns for that application. If a rule seems to have no effect, run <code>xprop WM_CLASS</code> and click the window to get the exact class name before debugging anything else.</p>
+</blockquote>
+<h2 id="module-6-autostartsh--session-startup"><a class="header" href="#module-6-autostartsh--session-startup">Module 6: <code>autostart.sh</code> — Session Startup</a></h2>
+<p><code>autostart.sh</code> is the last module sourced by <code>bspwmrc</code>. It starts long-running processes — the compositor, the keybinding daemon, the notification daemon, the bar, and optional services.</p>
+<pre><code class="language-bash">#!/bin/bash
+
+BSPDIR="$HOME/.config/bspwm"
+export PATH="${PATH}:$BSPDIR/src"
+source "$BSPDIR/bspwm.d/settings.sh"
+
+# Kill any processes from a previous session
+killall -9 xsettingsd sxhkd dunst ksuperkey polybar quickshell qs snapserver
+
+# Polkit authentication agent
+if [[ ! $(pidof xfce-polkit) ]]; then
+    /usr/lib/xfce-polkit/xfce-polkit &amp;
+fi
+
+# Keybinding daemon
+sxhkd -c "$BSPDIR"/bspwm.d/sxhkdrc &amp;
+
+# Super key → menu key mapping
+ksuperkey -e 'Super_L=Alt_L|F1' &amp;
+ksuperkey -e 'Super_R=Alt_L|F1' &amp;
+
+# Cursor shape
+xsetroot -cursor_name left_ptr
+
+# Music daemon
+systemctl --user start mpd &amp;
+
+# Compositor
+pkill picom
+picom --config "$BSPDIR"/bspwm.d/picom.conf &amp;
+
+################################ Wallpaper ##########################################
+
+if [[ $SINGLE_WALLPAPER == true ]]; then
+    feh --bg-fill "$WALLPAPER"
+elif [[ $DISFREE_WALLPAPER == true ]]; then
+    feh -z --no-fehbg --bg-fill "$BSPDIR/walls/disfree"
+else
+    feh -z --no-fehbg --bg-fill "$BSPDIR/walls"
+fi
+
+################################ Launch Widgets ######################################
+
+bash "$BSPDIR"/widgets/"$WIDGET_BAR"/launch.sh &amp;
+
+################################ Optional Services ###################################
+
+if [ $IS_SNAPSERVER_ENABLED == "true" ]; then
+    pactl load-module module-pipe-sink sink_name=snapfifo file=/tmp/snapfifo
+    pactl set-default-sink snapfifo
+    snapserver &amp;
+fi
+
+# Notification daemon wrapper
+bspdunst &amp;
+
+# Floating window rules daemon
+bspfloat &amp;
+</code></pre>
+<p>The wallpaper section reads three variables from <code>settings.sh</code> — <code>SINGLE_WALLPAPER</code>, <code>DISFREE_WALLPAPER</code>, and <code>WALLPAPER</code> — and picks the right <code>feh</code> invocation automatically. You never have to touch <code>autostart.sh</code> to change your wallpaper behavior; you change a variable in <code>settings.sh</code>.</p>
+<p>The bar launch is <code>bash "$BSPDIR"/widgets/"$WIDGET_BAR"/launch.sh</code>. <code>$WIDGET_BAR</code> is <code>"quickshell"</code> or <code>"polybar"</code> — both have a <code>launch.sh</code> inside their respective directories. Switching bars is a single variable change in <code>settings.sh</code>.</p>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>The <code>killall</code> line at the top of <code>autostart.sh</code> is not optional. bspwm re-runs <code>bspwmrc</code> on <code>bspc wm --restart</code>. Without killing previous instances, you accumulate multiple running copies of sxhkd, picom, polybar, and so on. This leads to duplicate keybinding handlers, visual glitches, and memory bloat. Always kill before restarting.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>The pattern <code>bspdunst</code> and <code>bspfloat</code> at the bottom are custom wrapper scripts that live in <code>src/</code>. Because <code>src/</code> is on <code>$PATH</code>, autostart just calls them by name. If you need to change how dunst is launched, you edit <code>src/bspdunst</code> — you don’t have to touch <code>autostart.sh</code> at all.</p>
+</blockquote>
+<h2 id="the-src-directory--portable-script-layer"><a class="header" href="#the-src-directory--portable-script-layer">The <code>src/</code> Directory — Portable Script Layer</a></h2>
+<p>One of the most underrated aspects of this layout is the <code>src/</code> directory. It holds every custom script this config relies on, and because <code>exports.sh</code> puts it on <code>$PATH</code>, those scripts are available everywhere: in <code>autostart.sh</code>, in <code>sxhkdrc</code>, in a terminal, and in rofi menus.</p>
+<p>Consider <code>bspterm</code>:</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+
+DIR="$HOME/.config/bspwm/apps"
+CONFIG="$DIR/alacritty/alacritty.toml"
+
+if [ "$1" == "--float" ]; then
+    alacritty --class 'alacritty-float,alacritty-float' --config-file "$CONFIG"
+elif [ "$0" == "--full" ]; then
+    alacritty --class 'alacritty-fullscreen,alacritty-fullscreen' \
+              --config-file "$CONFIG" \
+              -o window.startup_mode="'Fullscreen'" \
+              window.padding.x=30 window.padding.y=30 \
+              window.opacity=0.95 font.size=14
+else
+    alacritty --config-file "$CONFIG" ${@}
+fi
+</code></pre>
+<p>In <code>sxhkdrc</code>, you bind a key to <code>bspterm</code>. In a floating window rule, you can reference <code>alacritty-float</code> by class. If you ever switch from Alacritty to Kitty, you update <code>bspterm</code> in one place and your keybinding, your floating rules, and your autostart entries all just keep working.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The same pattern applies to <code>bspbar</code>, <code>bspscreenshot</code>, <code>bspvolume</code>, <code>bspbrightness</code>, and every other script in <code>src/</code>. Each one is a thin wrapper that reads your config’s variables and translates a simple command into however complex the underlying invocation needs to be. The caller never needs to know.</p>
+</blockquote>
+<h2 id="modular-alacritty-the-apps-pattern"><a class="header" href="#modular-alacritty-the-apps-pattern">Modular Alacritty: The <code>apps/</code> Pattern</a></h2>
+<p>The modular principle extends beyond bspwm itself into the apps you run inside it. The <code>apps/alacritty/</code> directory demonstrates a clean separation of concerns for a terminal emulator config:</p>
+<pre><code>apps/alacritty/
+├── alacritty.toml      ← imports the other files
+├── fonts.toml          ← font settings only
+├── colors.toml         ← active color scheme (a symlink or import)
+└── colorschemes/       ← 60+ standalone color scheme files
+    ├── Dracula.toml
+    ├── Nord.toml
+    ├── Tokyo_night.toml
+    └── ...
+</code></pre>
+<p><code>alacritty.toml</code> imports its siblings:</p>
+<pre><code class="language-toml">import = [
+  "~/.config/bspwm/apps/alacritty/fonts.toml",
+  "~/.config/bspwm/apps/alacritty/colors.toml"
+]
+</code></pre>
+<p><code>colors.toml</code> is either a symlink to the active colorscheme or re-exports one. Switching themes is a matter of updating that one file or symlink. The <code>RiceSelector</code> script in <code>src/</code> automates exactly this — it presents a rofi menu of available themes and updates the symlink, then reloads Alacritty.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Use this same pattern for every app that supports config imports: <code>kitty.conf</code> has <code>include</code>, <code>picom.conf</code> can use <code>@include</code>, GTK’s settings support theme files. Whenever you find yourself wanting a “dark mode” toggle or a “rice switcher”, modular app configs are what make it possible without rewriting everything every time.</p>
+</blockquote>
+<h2 id="modular-polybar-the-widgets-pattern"><a class="header" href="#modular-polybar-the-widgets-pattern">Modular Polybar: The <code>widgets/</code> Pattern</a></h2>
+<p>The bar configuration follows the same decomposition pattern internally:</p>
+<pre><code>widgets/polybar/
+├── launch.sh       ← kills old instances, starts new ones per monitor
+├── config.ini      ← bar geometry and module lists
+├── colors.ini      ← color variables only
+├── modules.ini     ← all module definitions
+├── decor.ini       ← decorative elements (separators, glyphs)
+└── gylphs.ini      ← nerd font glyph constants
+</code></pre>
+<p>Polybar supports <code>include-file</code> directives, so <code>config.ini</code> just pulls everything in:</p>
+<pre><code class="language-ini">include-file = ~/.config/bspwm/widgets/polybar/colors.ini
+include-file = ~/.config/bspwm/widgets/polybar/modules.ini
+include-file = ~/.config/bspwm/widgets/polybar/decor.ini
+include-file = ~/.config/bspwm/widgets/polybar/gylphs.ini
+</code></pre>
+<p>The <code>launch.sh</code> does something particularly elegant — it auto-detects hardware and patches the config:</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &amp;&gt; /dev/null &amp;&amp; pwd )"
+CARD="$(light -L | grep 'backlight' | head -n1 | cut -d'/' -f3)"
+INTERFACE="$(ip link | awk '/state UP/ {print $2}' | tr -d :)"
+BAT="$(acpi -b)"
+RFILE="$DIR/.module"
+
+fix_modules() {
+    # If no backlight card found, disable the module
+    if [[ -z "$CARD" ]]; then
+        sed -i -e 's/backlight/bna/g' "$DIR"/config.ini
+    elif [[ "$CARD" != *"intel_"* ]]; then
+        sed -i -e 's/backlight/brightness/g' "$DIR"/config.ini
+    fi
+
+    # If no battery found (desktop), disable battery module
+    if [[ -z "$BAT" ]]; then
+        sed -i -e 's/battery/btna/g' "$DIR"/config.ini
+    fi
+
+    # If ethernet rather than wifi, swap network module
+    if [[ "$INTERFACE" == e* ]]; then
+        sed -i -e 's/network/ethernet/g' "$DIR"/config.ini
+    fi
+}
+
+launch_bar() {
+    killall -q polybar
+    while pgrep -u $UID -x polybar &gt;/dev/null; do sleep 1; done
+
+    for mon in $(polybar --list-monitors | cut -d":" -f1); do
+        MONITOR=$mon polybar -q work-bar -c "${DIR}/config.ini" &amp;
+    done
+}
+
+# Only patch modules once (tracked by .module sentinel file)
+if [[ ! -f "$RFILE" ]]; then
+    fix_modules
+    touch "$RFILE"
+fi
+launch_bar
+</code></pre>
+<p>The sentinel file <code>.module</code> ensures <code>fix_modules()</code> only runs once — the first time after a fresh install. After that, launching the bar is just launching the bar.</p>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p>If you copy this config to a new machine and the bar modules seem wrong (brightness not working, battery missing, wrong network interface), delete <code>.module</code> in the polybar directory and restart. The <code>fix_modules()</code> function will re-detect hardware and patch <code>config.ini</code> fresh.</p>
+</blockquote>
+<h2 id="wiring-it-all-together-source-order-dependency-graph"><a class="header" href="#wiring-it-all-together-source-order-dependency-graph">Wiring It All Together: Source Order Dependency Graph</a></h2>
+<p>Here is the complete dependency chain at a glance:</p>
+<pre><code>bspwmrc
+  └── settings.sh
+        └── exports.sh     (defines $BSPDIR, $PATH)
+  └── monitor.sh           (defines workspaces(), two_monitors_workspaces(), etc.)
+  └── config.sh
+        └── settings.sh    (reads all BSPWM_* variables)
+  └── rules.sh             (sourced inline, no functions — runs immediately)
+  └── autostart.sh
+        └── settings.sh    (reads $WIDGET_BAR, $DISFREE_WALLPAPER, etc.)
+</code></pre>
+<p>Notice that <code>settings.sh</code> is sourced in multiple places. This is fine — sourcing a file that only defines variables is idempotent. But it also means you need to make sure <code>settings.sh</code> itself has no side effects. No <code>bspc config</code> calls, no process launches, no file mutations. Variables only.</p>
+<blockquote class="blockquote-tag blockquote-tag-caution">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p>
+<p>Never put <code>bspc config</code> calls directly inside <code>settings.sh</code>. If you do, those calls execute at source time — before the WM has finished initializing, and before <code>monitor.sh</code> has set up desktops. You will get race conditions and silent failures that are genuinely painful to debug.</p>
+</blockquote>
+<h2 id="live-reloading"><a class="header" href="#live-reloading">Live Reloading</a></h2>
+<p>One of the practical superpowers of this structure is that you can reload individual modules without restarting the entire session.</p>
+<p>To reload just the window rules:</p>
+<pre><code class="language-bash">source ~/.config/bspwm/bspwm.d/rules.sh
+</code></pre>
+<p>To reload and re-apply all bspwm settings:</p>
+<pre><code class="language-bash">bspc wm --restart
+</code></pre>
+<p><code>bspc wm --restart</code> re-executes <code>bspwmrc</code> in-place without killing your windows or your session. Because <code>bspwmrc</code> sources every module fresh, any change you made to <code>settings.sh</code>, <code>config.sh</code>, or <code>rules.sh</code> takes effect immediately. The <code>killall</code> in <code>autostart.sh</code> ensures old daemons are replaced cleanly.</p>
+<p>To reload just your keybindings without touching anything else:</p>
+<pre><code class="language-bash">pkill sxhkd &amp;&amp; sxhkd -c ~/.config/bspwm/bspwm.d/sxhkdrc &amp;
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Bind <code>bspc wm --restart</code> to a key in <code>sxhkdrc</code>. A common binding is <code>super + shift + r</code>. This way, the edit-save-reload loop on your config takes about two seconds, which makes iterating on settings feel instant.</p>
+</blockquote>
+<h2 id="adding-a-new-module"><a class="header" href="#adding-a-new-module">Adding a New Module</a></h2>
+<p>The architecture is designed to grow. To add a new configuration domain — say, pointer behavior — you follow a simple process.</p>
+<p>First, add your variables to <code>settings.sh</code>:</p>
+<pre><code class="language-bash">################ Pointer Behavior ####################
+
+IS_BSPWM_FFP="true"
+FOCUS_FOLLOWS_POINTER="true"
+
+IS_BSPWM_PFF="false"
+POINTER_FOLLOWS_FOCUS="false"
+
+POINTER_FOLLOWS_MONITOR="false"
+</code></pre>
+<p>Then, add a function to <code>config.sh</code>:</p>
+<pre><code class="language-bash">configure_pointer() {
+    bspc config focus_follows_pointer   "$FOCUS_FOLLOWS_POINTER"
+    bspc config pointer_follows_focus   "$POINTER_FOLLOWS_FOCUS"
+    bspc config pointer_follows_monitor "$POINTER_FOLLOWS_MONITOR"
+}
+</code></pre>
+<p>Add it to the dispatcher:</p>
+<pre><code class="language-bash">bspc_configure() {
+    case ${1} in
+        border)        configure_border  ;;
+        windows)       configure_windows ;;
+        monocle)       configure_monocle ;;
+        scheme)        configure_scheme  ;;
+        status_prefix) configure_prefix  ;;
+        pointer)       configure_pointer ;;  # ← new
+    esac
+}
+</code></pre>
+<p>And add one line to <code>bspwmrc</code>:</p>
+<pre><code class="language-bash">bspc_configure pointer
+</code></pre>
+<p>That’s it. Three changes across three files, each change is exactly one logical unit, and nothing else in the config is disturbed.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>The modular bspwm config pattern is not about complexity — it’s about making a complex system simple to reason about. Every file has one job. Every variable has one home. Every behavior has one place you go to change it.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Module</th><th>Responsibility</th></tr>
+</thead>
+<tbody>
+<tr><td><code>exports.sh</code></td><td><code>$PATH</code>, environment variables</td></tr>
+<tr><td><code>settings.sh</code></td><td>All tunable values, boolean flags</td></tr>
+<tr><td><code>config.sh</code></td><td>Functions that issue <code>bspc config</code> calls</td></tr>
+<tr><td><code>monitor.sh</code></td><td>Workspace and monitor layout functions</td></tr>
+<tr><td><code>rules.sh</code></td><td>All <code>bspc rule</code> declarations</td></tr>
+<tr><td><code>autostart.sh</code></td><td>Process lifecycle management</td></tr>
+<tr><td><code>src/</code></td><td>Portable helper scripts on <code>$PATH</code></td></tr>
+<tr><td><code>apps/</code></td><td>Per-application modular configs</td></tr>
+<tr><td><code>widgets/</code></td><td>Bar and widget ecosystems</td></tr>
+</tbody>
+</table>
+</div>
+<p>When your config is structured this way, you can hand it to someone who has never seen your setup and they can find anything they need in under a minute. You can git-diff a theme change and see exactly which three lines changed. You can swap your entire bar from Polybar to Quickshell by changing one string. You can add a monitor layout for a new machine without looking at anything except <code>monitor.sh</code>.</p>
+<p>That’s the goal. Build the config once, and then you never have to fight it again.</p>
 
                     </main>
 
