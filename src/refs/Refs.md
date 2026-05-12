@@ -43,5 +43,17 @@ These are some nice configurations that beginners should try learning and config
 
 <br>
 
+### 4) dhanush777x Dotfiles 
+
+[**visit**](https://github.com/dhanush777x/dotfiles.git)
+
+**Desc :** Designed around a single cohesive theme - Catppuccin Mocha. Rather than supporting multiple themes, everything is tailored specifically for this pallete to maintain visual consistency across the entire system. A keyboard centric workflow as mentioned by the creator. Go for it if you prioritize speed, consistency and efficiency. Made by [dhanush](https://github.com/dhanush777x).
+
+**Gallery :**
+
+![Preview](../assets/dhanush777x/01.png)
+
+<br>
+
 ## How to get yours here
 Make a pull request to the repository linking your bspwm dotfile repository with description. If you have a very good documentation and configuration for bspwm with a nice asthetic, your bspwm configuration can mean a lot to others. It will be added to the list.
